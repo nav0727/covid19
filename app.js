@@ -104,18 +104,16 @@ app.put("/districts/:districtId", async (request, response) => {
 //stateWise status API
 
 app.get("/states/:stateId/stats/", async (request, response) => {
-  const { totalCases, totalCured, totalActive, totalDeaths } = request.body;
-
   const { stateId } = request.params;
 
   const getTotalQuery = `SELECT SUM(cases) AS totalCases,
                                     SUM(cured) AS totalCured,
-                                    SUM(active) AS totalActive 
+                                    SUM(active) AS totalActive ,
                                     SUM(deaths) AS totalDeaths
-                     FROM   district  WHERE state_id=${stateId};`;
+                     FROM  state NATURAL JOIN  district  WHERE state_id=${stateId};`;
 
-  const totalSum = await database.all(getTotalQuery);
-  response.send(convertDistDbObjToResObj(totalSum));
+  const totalSum = await database.get(getTotalQuery);
+  response.send(totalSum);
 });
 //get stateName API
 
